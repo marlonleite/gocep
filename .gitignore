@@ -1,0 +1,22 @@
+# PyCharm
+.idea/
+
+# VisualStudioCode
+.vscode/
+
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+media/
+
+# pyenv
+.python-version
+
+# Virtualenv
+.env
+.venv
+venv/
