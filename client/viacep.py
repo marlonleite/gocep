@@ -58,10 +58,13 @@ class ViaCepApi:
         return self.connect_api_base(url, message=message)
 
     def normalize_keys(self, data):
-        data['zip_code'] = data.pop('cep')
-        data['address'] = data.pop('logradouro')
-        data['address2'] = data.pop('complemento')
-        data['neighborhood'] = data.pop('bairro')
-        data['city'] = data.pop('localidade')
-        data['unity'] = data.pop('unidade')
+        data.update({
+            "zip_code": data.pop('cep'),
+            "address": data.pop('logradouro'),
+            "address2": data.pop('complemento'),
+            "neighborhood": data.pop('bairro'),
+            "city": data.pop('localidade'),
+            "unity": data.pop('unidade'),
+        })
+
         return data
