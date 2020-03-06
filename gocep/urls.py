@@ -16,6 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from client import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('<int:code>/', views.GoCepApiView.as_view(), name='gocep-code'),
+    path('', views.GoCepApiView.as_view(), name='gocep')
 ]
