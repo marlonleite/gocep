@@ -1,19 +1,37 @@
 import requests
 from django.conf import settings
 
-from .exceptions import BaseException
-
 
 class ViaCepApi:
     """
     Class ViaCep Api
     https://viacep.com.br/
     """
-    def __init__(self):
-        self.path = settings.VIACEP_URL
 
-    def _connect_api(self, *args, **kwargs):
-        return requests.get(*args, **kwargs)
+    def __init__(self):
+        self.api_base = settings.VIACEP_URL
+
+    def connect_api_base(self, *args, **kwargs):
+        message = kwargs.get("message")
+        if message:
+            del kwargs["message"]
+
+        response = requests.get(*args, **kwargs)
+
+        data = {'status': response.status_code}
+
+        if response.status_code == 200:
+            response_data = response.json()
+            if type(response_data) == list:
+                data['response'] = [self.normalize_keys(d) for d in response_data]
+            else:
+                data['response'] = self.normalize_keys(response_data)
+        elif response.status_code == 400:
+            data['message'] = message
+        else:
+            # response.raise_for_status()
+            pass
+        return data
 
     def get_by_zip_code(self, zip_code):
         """
@@ -21,16 +39,10 @@ class ViaCepApi:
         :param zip_code: str ZipCode 8 digits
         :return: dict with address
         """
-        url = f'{self.path}/ws/{zip_code}/json'
+        url = f'{self.api_base}/ws/{zip_code}/json'
+        message = f'Invalid Zip Code: {zip_code}'
 
-        response = self._connect_api(url)
-
-        if response.status_code == 200:
-            return response.json()
-        elif response.status_code == 400:
-            raise BaseException(message=f"Invalid Zip Code: {zip_code}")
-        else:
-            raise BaseException(message="Error")
+        return self.connect_api_base(url, message=message)
 
     def get_by_address(self, uf, city, street):
         """
@@ -40,14 +52,16 @@ class ViaCepApi:
         :param street: str Street of Address
         :return: dict with ZipCode and Address data
         """
-        url = f'{self.path}/ws/{uf}/{city}/{street}/json'
+        url = f'{self.api_base}/ws/{uf}/{city}/{street}/json'
+        message = 'City and street must be at least three characters'
 
-        response = self._connect_api(url)
+        return self.connect_api_base(url, message=message)
 
-        if response.status_code == 200:
-            return response.json()
-        elif response.status_code == 400:
-            raise BaseException(
-                message=f"City and Street must be 3 characters of lenght")
-        else:
-            raise BaseException(message="Error")
+    def normalize_keys(self, data):
+        data['zip_code'] = data.pop('cep')
+        data['address'] = data.pop('logradouro')
+        data['address2'] = data.pop('complemento')
+        data['neighborhood'] = data.pop('bairro')
+        data['city'] = data.pop('localidade')
+        data['unity'] = data.pop('unidade')
+        return data
