@@ -20,6 +20,6 @@ from client import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('<int:code>/', views.GoCepApiView.as_view(), name='gocep-code'),
-    path('', views.GoCepApiView.as_view(), name='gocep')
+    path('address/<int:zipcode>/', views.GoCepApiView.as_view(), name='gocep-zipcode'),
+    path('address/', views.GoCepApiView.as_view(), name='gocep-address')
 ]
