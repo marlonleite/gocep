@@ -11,12 +11,6 @@ class AddressApiView(APIView):
     """
     vc = ViaCepApi()
 
-    def error_message(self, value):
-        message_error = "Code Invalid {}"
-
-        return Response(
-            {'message': message_error.format(value)}, status.HTTP_400_BAD_REQUEST)
-
     def get(self, request, zip_code=None):
         """
         Method Get address or list of addresses
@@ -27,9 +21,6 @@ class AddressApiView(APIView):
 
         if zip_code:
             response = self.vc.get_by_zip_code(zip_code)
-
-            if response['response'].get("erro"):
-                return self.error_message(zip_code)
         else:
             address_data = {}
             for k, v in request.query_params.items():
@@ -38,8 +29,6 @@ class AddressApiView(APIView):
             if address_data.get("zip_code"):
                 response = self.vc.get_by_zip_code(address_data["zip_code"])
 
-                if response['response'].get("erro"):
-                    return self.error_message(address_data["zip_code"])
             else:
                 if address_data.get("zip_code"):
                     del address_data["zip_code"]
