@@ -22,10 +22,12 @@ class ViaCepApi:
 
         if response.status_code == 200:
             response_data = response.json()
+
             if type(response_data) == list:
                 data['response'] = [self.normalize_keys(d) for d in response_data]
             else:
                 data['response'] = self.normalize_keys(response_data)
+
         elif response.status_code == 400:
             data['message'] = message
         else:
@@ -48,23 +50,32 @@ class ViaCepApi:
         """
         Return ZipCode from Address
         :param uf: str State abbreviation
-        :param city: str City name
-        :param street: str Street of Address
-        :return: dict with ZipCode and Address data
+        :param city: str city name
+        :param street: str street address
+        :return: dict or list address
         """
         url = f'{self.api_base}/ws/{uf}/{city}/{street}/json'
-        message = 'City and street must be at least three characters'
+        message = 'City and address must be at least three characters'
 
         return self.connect_api_base(url, message=message)
 
     def normalize_keys(self, data):
+
+        if data.get('erro'):
+            return data
+
+        remove_keys = ['unidade', 'complemento', 'gia']
+
+        for k in remove_keys:
+            data.pop(k)
+
         data.update({
             "zip_code": data.pop('cep'),
-            "address": data.pop('logradouro'),
-            "address2": data.pop('complemento'),
-            "neighborhood": data.pop('bairro'),
+            "uf": data.pop('uf'),
             "city": data.pop('localidade'),
-            "unity": data.pop('unidade'),
+            "street": data.pop('logradouro'),
+            "neighborhood": data.pop('bairro'),
+            "ibge": data.pop('ibge'),
         })
 
         return data
