@@ -34,9 +34,9 @@ class AddressApiTest(APITestCase):
 
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
 
-    def test_error_address(self):
+    def test_address_few_chars_city_street(self):
         """
-            Ensure we can prevent invalid url requests
+            Ensure we can prevent invalid city, street fields
         """
         url = reverse('gocep-address')
         data = {'uf': 'AL', 'city': 'M', 'street': 'R'}
@@ -45,9 +45,31 @@ class AddressApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(len(response.data), 1)
 
-        data2 = {'street': 'Rua das Acácias'}
-        response2 = self.client.get(url, data2, format="json")
+    def test_address_invalid_fields(self):
+        """
+          Ensure we can prevent no required fields
+        """
+        url = reverse('gocep-address')
+        data = {'street': 'Rua das Acácias'}
+        response = self.client.get(url, data, format="json")
 
-        self.assertEqual(response2.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data['message'], "Required fields uf, city, street or zip_code.")
+
+    def test_address_invalid_zip_code(self):
+        """
+          Ensure we can prevent invalid field zip_code
+        """
+        data = {'zip_code': '5701551435'}
+        url = reverse('gocep-zip_code', kwargs=data)
+        response = self.client.get(url, data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(len(response.data), 1)
+
+        url2 = reverse('gocep-address')
+        response2 = self.client.get(url2, data, format="json")
+
+        self.assertEqual(response2.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(len(response2.data), 1)
-        self.assertEqual(response2.data['message'], "Required fields uf, city, street or zip_code.")
