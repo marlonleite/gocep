@@ -118,3 +118,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 VIACEP_URL = "http://www.viacep.com.br"
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ]
+}
