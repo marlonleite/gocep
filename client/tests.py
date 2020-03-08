@@ -17,14 +17,15 @@ class AddressApiTest(APITestCase):
         response = self.client.get(url, data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 6)
+        self.assertEqual(len(response.data), 5)
 
     def test_address_params(self):
         """
-          Ensure we can consult by site_url/?uf=value or site_url/api/?zip_code=value.
+          Ensure we can consult by
+          site_url/?federated_state=value or site_url/api/?zip_code=value.
         """
         url = reverse('gocep-address')
-        data = {'uf': 'AL', 'city': 'Maceió', 'street': 'Rua centro'}
+        data = {'federated_state': 'AL', 'city': 'Maceió', 'street': 'Rua centro'}
         response = self.client.get(url, data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -39,7 +40,7 @@ class AddressApiTest(APITestCase):
             Ensure we can prevent invalid city, street fields
         """
         url = reverse('gocep-address')
-        data = {'uf': 'AL', 'city': 'M', 'street': 'R'}
+        data = {'federated_state': 'AL', 'city': 'M', 'street': 'R'}
         response = self.client.get(url, data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -55,7 +56,10 @@ class AddressApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data['message'], "Required fields uf, city, street or zip_code.")
+        self.assertEqual(
+            response.data['message'],
+            "Required fields federated_state, city, street or zip_code."
+        )
 
     def test_address_invalid_zip_code(self):
         """

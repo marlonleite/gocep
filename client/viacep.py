@@ -46,15 +46,15 @@ class ViaCepApi:
 
         return self.connect_api_base(url, message=message)
 
-    def get_by_address(self, uf, city, street):
+    def get_by_address(self, federated_state, city, street):
         """
         Return ZipCode from Address
-        :param uf: str State abbreviation
+        :param federated_state: str state abbreviation
         :param city: str city name
         :param street: str street address
         :return: dict or list address
         """
-        url = f'{self.api_base}/ws/{uf}/{city}/{street}/json'
+        url = f'{self.api_base}/ws/{federated_state}/{city}/{street}/json'
         message = 'City and address must be at least three characters'
 
         return self.connect_api_base(url, message=message)
@@ -64,18 +64,17 @@ class ViaCepApi:
         if data.get('erro'):
             return data
 
-        remove_keys = ['unidade', 'complemento', 'gia']
+        remove_keys = ['unidade', 'complemento', 'gia', 'ibge']
 
         for k in remove_keys:
             data.pop(k)
 
         data.update({
-            "zip_code": data.pop('cep'),
-            "uf": data.pop('uf'),
+            "zip_code": data.pop('cep').replace('-', ''),
+            "federated_state": data.pop('uf'),
             "city": data.pop('localidade'),
             "street": data.pop('logradouro'),
             "neighborhood": data.pop('bairro'),
-            "ibge": data.pop('ibge'),
         })
 
         return data

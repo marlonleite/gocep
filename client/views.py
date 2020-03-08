@@ -15,7 +15,7 @@ class AddressApiView(APIView):
         """
         Method Get address or list of addresses
         :param zip_code: <int>
-        :param uf, city, street or zip_code: <string> query params
+        :param federated_state, city, street or zip_code: <string> query params
         :return: dict or list addresses
         """
 
@@ -33,10 +33,10 @@ class AddressApiView(APIView):
                 if address_data.get("zip_code"):
                     del address_data["zip_code"]
 
-                allowed_keys = {"uf", "city", "street"}
+                allowed_keys = {"federated_state", "city", "street"}
 
                 if allowed_keys != address_data.keys():
-                    message = "Required fields uf, city, street or zip_code."
+                    message = "Required fields federated_state, city, street or zip_code."
                     return Response({'message': message}, status.HTTP_400_BAD_REQUEST)
 
                 response = self.vc.get_by_address(**address_data)
