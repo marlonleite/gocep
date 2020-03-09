@@ -26,20 +26,13 @@ class AddressApiView(APIView):
             for k, v in request.query_params.items():
                 address_data.update({k: v})
 
-            if address_data.get("zip_code"):
-                response = self.vc.get_by_zip_code(address_data["zip_code"])
+            allowed_keys = {"federated_state", "city", "street"}
 
-            else:
-                if address_data.get("zip_code"):
-                    del address_data["zip_code"]
+            if allowed_keys != address_data.keys():
+                message = "Required fields federated_state, city, street."
+                return Response({'message': message}, status.HTTP_400_BAD_REQUEST)
 
-                allowed_keys = {"federated_state", "city", "street"}
-
-                if allowed_keys != address_data.keys():
-                    message = "Required fields federated_state, city, street or zip_code."
-                    return Response({'message': message}, status.HTTP_400_BAD_REQUEST)
-
-                response = self.vc.get_by_address(**address_data)
+            response = self.vc.get_by_address(**address_data)
 
         if response['status'] == 200:
             return Response(response['response'], status.HTTP_200_OK)
