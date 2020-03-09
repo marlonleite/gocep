@@ -1,8 +1,9 @@
 version: '3'
 
 services:
-  web:
+  gocep:
     build: .
+    container_name: gocep_app
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
