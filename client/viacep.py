@@ -1,3 +1,5 @@
+import logging
+
 import requests
 from django.conf import settings
 
@@ -16,23 +18,30 @@ class ViaCepApi:
         if message:
             del kwargs["message"]
 
-        response = requests.get(*args, **kwargs)
+        data = {}
 
-        data = {'status': response.status_code}
+        try:
+            response = requests.get(*args, **kwargs)
+            data.update({'status': response.status_code})
 
-        if response.status_code == 200:
-            response_data = response.json()
+            if response.status_code == 200:
+                response_data = response.json()
 
-            if type(response_data) == list:
-                data['response'] = [self.normalize_keys(d) for d in response_data]
+                if type(response_data) == list:
+                    data['response'] = [self.normalize_keys(d) for d in response_data]
+                else:
+                    data['response'] = self.normalize_keys(response_data)
+
+            elif response.status_code == 400:
+                data['message'] = message
             else:
-                data['response'] = self.normalize_keys(response_data)
+                # response.raise_for_status()
+                pass
 
-        elif response.status_code == 400:
-            data['message'] = message
-        else:
-            # response.raise_for_status()
-            pass
+        except Exception as e:
+            logging.error("Connection error")
+            data.update({'status': 500 })
+
         return data
 
     def get_by_zip_code(self, zip_code):
