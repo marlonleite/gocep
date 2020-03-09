@@ -43,6 +43,29 @@ And run the application
 ./manage.py runserver
 ```
 
+## How it works:
+
+Trying the rest routes:
+
+```
+GET /api/<int:zip_code>/
+```
+or
+```
+GET /api/?federated_state=<string>&city=<string>&street=<string>/
+```
+
+```
+Response:
+{
+    "zip_code": "string",
+    "federated_state": "string",
+    "city": "string",
+    "street": "string",
+    "neighborhood": "string"
+}
+```
+
 ## Running the tests
 
 Some tests were done in the application. 
@@ -58,6 +81,3 @@ Go there:
 
 * **Marlon Leite** - [GitHub](https://github.com/marlonleite)
 
-## License
-
-...
