@@ -2,6 +2,7 @@ import logging
 
 import requests
 from django.conf import settings
+from requests import ReadTimeout, ConnectionError
 
 
 class ViaCepApi:
@@ -38,9 +39,9 @@ class ViaCepApi:
                 # response.raise_for_status()
                 pass
 
-        except Exception as e:
+        except (ConnectionError, ReadTimeout) as e:
             logging.error("Connection error")
-            data.update({'status': 500 })
+            data.update({'status': 500})
 
         return data
 
