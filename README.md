@@ -23,24 +23,26 @@ git clone https://github.com/marlonleite/goCep.git
 
 ### Installation
 
-Install Virtualenv ...
+Virtualenv:
 ```
 python3 --version
 python3 -m venv venv
 source venv/bin/activate
-```
-
-Install using pip...
-
-```
+ 
 pip install --upgrade pip
 pip install -r requirements.txt
+
+python manage.py runserver
 ```
 
-And run the application
-
+Docker:
 ```
-./manage.py runserver
+Create:
+docker-compose up -d
+
+Drop:
+docker-compose down
+
 ```
 
 ## How it works:
