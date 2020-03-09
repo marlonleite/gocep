@@ -60,11 +60,11 @@ GET /api/?federated_state=<string>&city=<string>&street=<string>/
 ```
 Response:
 {
-    "zip_code": "string",
-    "federated_state": "string",
-    "city": "string",
-    "street": "string",
-    "neighborhood": "string"
+    "zip_code": <string>,
+    "federated_state": <string>,
+    "city": <string>,
+    "street": <string>,
+    "neighborhood": <string>
 }
 ```
 
