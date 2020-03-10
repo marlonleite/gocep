@@ -83,6 +83,10 @@ Go there:
 ./manage.py test
 ```
 
+## Live Previews
+
+* [http://gocep.marlonleite.com.br/api/](http://gocep.marlonleite.com.br/api/)
+
 ## Authors
 
 * **Marlon Leite** - [GitHub](https://github.com/marlonleite)
