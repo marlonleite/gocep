@@ -32,6 +32,7 @@ source venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 
+python manage.py migrate
 python manage.py runserver
 ```
 
@@ -39,6 +40,9 @@ Docker:
 ```
 Create:
 docker-compose up -d
+
+Access:
+http://127.0.0.1:8999
 
 Drop:
 docker-compose down
